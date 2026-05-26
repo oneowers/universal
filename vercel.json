@@ -1,6 +1,8 @@
 {
+  "$schema": "https://openapi.vercel.sh/vercel.json",
   "rewrites": [
     { "source": "/aisha/:path*", "destination": "https://back.aisha.group/:path*" },
     { "source": "/gemini/:path*", "destination": "https://generativelanguage.googleapis.com/:path*" }
-  ]
+  ],
+  "cleanUrls": false
 }
