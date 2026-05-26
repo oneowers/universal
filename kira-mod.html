@@ -1,0 +1,1284 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>KIRA//MOD ⌬ каталог имплантов 神経</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Stencil+Display:wght@500;700;800;900&family=JetBrains+Mono:wght@300;400;700&family=Zen+Old+Mincho:wght@400;700;900&family=Zen+Kaku+Gothic+New:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --carbon:   #0b0c09;
+    --carbon-2: #131410;
+    --carbon-3: #1d1e18;
+    --bone:     #ebe6d4;
+    --bone-d:   #b5b09e;
+    --acid:     #d4ff3a;
+    --acid-d:   #9fc81b;
+    --hazard:   #ff4d1f;
+    --surgical: #4dd9ff;
+    --blood:    #6e1a18;
+    --line:     rgba(235,230,212,.14);
+    --line-2:   rgba(235,230,212,.06);
+  }
+
+  /* ── reset ─────────────────────────────────────── */
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--carbon);
+    color: var(--bone);
+    font-family: "Zen Old Mincho", serif;
+    font-weight: 400;
+    line-height: 1.5;
+    overflow-x: hidden;
+    cursor: crosshair;
+    background-image:
+      radial-gradient(ellipse 80% 60% at 20% 0%, rgba(212,255,58,.08), transparent 60%),
+      radial-gradient(ellipse 60% 40% at 100% 100%, rgba(255,77,31,.08), transparent 60%);
+  }
+
+  /* grain */
+  body::before {
+    content: "";
+    position: fixed; inset: -10%;
+    z-index: 9998; pointer-events: none;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 .35 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+    mix-blend-mode: overlay;
+    opacity: .25;
+  }
+  /* scanlines */
+  body::after {
+    content: "";
+    position: fixed; inset: 0;
+    z-index: 9997; pointer-events: none;
+    background-image: repeating-linear-gradient(0deg, transparent 0 3px, rgba(0,0,0,.18) 3px 4px);
+    mix-blend-mode: multiply;
+    opacity: .55;
+  }
+
+  /* keyframes */
+  @keyframes scan      { 0% { transform: translateY(-100%);} 100% { transform: translateY(100vh);} }
+  @keyframes flicker   { 0%,7%,9%,100% { opacity: 1;} 8% { opacity:.35;} }
+  @keyframes pulse     { 0%,100% { opacity: 1; transform: scale(1);} 50% { opacity:.5; transform: scale(.92);} }
+  @keyframes blink     { 50% { opacity: 0; } }
+  @keyframes spin      { to { transform: rotate(360deg); } }
+  @keyframes spinR     { to { transform: rotate(-360deg); } }
+  @keyframes tick      { 0%,90%{opacity:1} 91%,100%{opacity:.2} }
+  @keyframes marquee   { 0% { transform: translateX(0);} 100% { transform: translateX(-50%);} }
+  @keyframes rise      { from { opacity: 0; transform: translateY(28px);} to { opacity: 1; transform: translateY(0);} }
+  @keyframes drift     { 0%,100%{transform:translate(0,0)} 50%{transform:translate(4px,-4px)} }
+  @keyframes glitch    { 0%,100%{ clip-path: inset(0 0 0 0);} 12%{ clip-path: inset(40% 0 30% 0); transform: translateX(2px);} 25%{ clip-path: inset(10% 0 60% 0); transform: translateX(-2px);} 38%{ clip-path: inset(70% 0 5% 0); transform: translateX(1px);} }
+
+  ::selection { background: var(--acid); color: var(--carbon); }
+
+  a { color: inherit; text-decoration: none; }
+  button { font: inherit; cursor: none; }
+
+  /* ── utility ─────────────────────────────────── */
+  .mono { font-family: "JetBrains Mono", monospace; font-weight: 400; letter-spacing: .02em; }
+  .stencil {
+    font-family: "Big Shoulders Stencil Display", sans-serif;
+    font-weight: 900; letter-spacing: -.01em; line-height: .85;
+  }
+  .ja { font-family: "Zen Kaku Gothic New", sans-serif; }
+  .label {
+    font-family: "JetBrains Mono", monospace; font-size: .68rem;
+    text-transform: uppercase; letter-spacing: .25em;
+    color: var(--bone-d);
+  }
+  .acid { color: var(--acid); }
+  .hazard { color: var(--hazard); }
+  .surgical { color: var(--surgical); }
+
+  /* ── global scan line (decorative) ─────────────── */
+  .scan-line {
+    position: fixed; inset: 0 0 auto 0; height: 90px; z-index: 5;
+    pointer-events: none;
+    background: linear-gradient(180deg, transparent, rgba(212,255,58,.07), transparent);
+    animation: scan 9s linear infinite;
+  }
+
+  /* ── nav ─────────────────────────────────────── */
+  nav.top {
+    position: sticky; top: 0; z-index: 100;
+    display: grid; grid-template-columns: auto 1fr auto auto;
+    gap: 2rem; align-items: center;
+    padding: 1rem 1.6rem;
+    border-bottom: 1px solid var(--line);
+    background: rgba(11,12,9,.88);
+    backdrop-filter: blur(8px);
+  }
+  .brand {
+    display: flex; align-items: baseline; gap: .5rem;
+    font-family: "Big Shoulders Stencil Display", sans-serif;
+    font-weight: 900; font-size: 1.7rem; letter-spacing: -.02em;
+  }
+  .brand .slash { color: var(--acid); font-weight: 900; }
+  .brand .ja { color: var(--bone-d); font-size: .9rem; letter-spacing: .25em; }
+
+  .nav-links {
+    display: flex; gap: 1.6rem; font-family: "JetBrains Mono", monospace;
+    font-size: .72rem; text-transform: uppercase; letter-spacing: .2em;
+  }
+  .nav-links a { position: relative; padding: .2rem 0; transition: color .2s; }
+  .nav-links a::before {
+    content: "›"; color: var(--acid); margin-right: .35rem; opacity: 0; transition: opacity .2s;
+  }
+  .nav-links a:hover::before { opacity: 1; }
+  .nav-links a:hover { color: var(--acid); }
+
+  .clock {
+    font-family: "JetBrains Mono", monospace; font-size: .75rem;
+    color: var(--bone-d); display: flex; gap: .8rem; align-items: center;
+  }
+  .clock .dot { width: 6px; height: 6px; background: var(--acid); border-radius: 50%; animation: blink 1.4s steps(1) infinite; }
+
+  .cart-btn {
+    border: 1px solid var(--acid); color: var(--acid);
+    background: transparent; padding: .5rem .9rem;
+    font-family: "JetBrains Mono", monospace; font-size: .72rem;
+    letter-spacing: .2em; text-transform: uppercase;
+    transition: background .2s, color .2s;
+  }
+  .cart-btn:hover { background: var(--acid); color: var(--carbon); }
+
+  /* ── hero ────────────────────────────────────── */
+  .hero {
+    position: relative; padding: 3.5rem 1.6rem 4rem;
+    border-bottom: 1px solid var(--line);
+    overflow: hidden;
+  }
+  .hero-grid {
+    display: grid; grid-template-columns: 1.3fr 1fr;
+    gap: 3rem; align-items: end;
+  }
+  .hero h1 {
+    margin: 0;
+    font-family: "Big Shoulders Stencil Display", sans-serif;
+    font-weight: 900;
+    font-size: clamp(3.5rem, 13vw, 13rem);
+    line-height: .82;
+    letter-spacing: -.025em;
+  }
+  .hero h1 .l1 { display: block; color: var(--bone); }
+  .hero h1 .l2 { display: block; color: var(--acid); }
+  .hero h1 .l3 { display: block; color: var(--carbon-3); -webkit-text-stroke: 1.5px var(--bone-d); }
+
+  .hero-sub {
+    margin-top: 1.4rem;
+    max-width: 38ch;
+    font-family: "Zen Old Mincho", serif;
+    font-size: 1.05rem; color: var(--bone-d);
+    line-height: 1.55;
+  }
+  .hero-sub em { color: var(--acid); font-style: normal; }
+
+  .hero-meta {
+    margin-top: 2rem;
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 1rem; border-top: 1px solid var(--line); padding-top: 1.2rem;
+  }
+  .hero-meta div { padding-right: 1rem; border-right: 1px solid var(--line); }
+  .hero-meta div:last-child { border-right: none; }
+  .hero-meta .v { font-family: "JetBrains Mono", monospace; font-size: 1.4rem; color: var(--bone); margin-top: .3rem; }
+  .hero-meta .v small { color: var(--acid); font-size: .8rem; }
+
+  /* hero side — featured implant card */
+  .feature {
+    border: 1px solid var(--line);
+    background:
+      linear-gradient(135deg, var(--carbon-2), var(--carbon));
+    padding: 1.6rem;
+    position: relative;
+    isolation: isolate;
+  }
+  .feature::before, .feature::after {
+    content: ""; position: absolute; width: 14px; height: 14px;
+    border: 1.5px solid var(--acid);
+  }
+  .feature::before { top: -2px; left: -2px; border-right: none; border-bottom: none; }
+  .feature::after  { bottom: -2px; right: -2px; border-left: none; border-top: none; }
+
+  .feature .corner-tr, .feature .corner-bl {
+    position: absolute; width: 14px; height: 14px; border: 1.5px solid var(--acid);
+  }
+  .feature .corner-tr { top: -2px; right: -2px; border-left: none; border-bottom: none; }
+  .feature .corner-bl { bottom: -2px; left: -2px; border-right: none; border-top: none; }
+
+  .feature-head {
+    display: flex; justify-content: space-between; align-items: center;
+    border-bottom: 1px dashed var(--line); padding-bottom: .6rem;
+    font-family: "JetBrains Mono", monospace; font-size: .7rem;
+    color: var(--bone-d); text-transform: uppercase; letter-spacing: .2em;
+  }
+  .feature-head .live {
+    color: var(--acid); display: inline-flex; gap: .4rem; align-items: center;
+  }
+  .feature-head .live::before {
+    content: ""; width: 7px; height: 7px; background: var(--acid); border-radius: 50%;
+    animation: pulse 1.6s ease-in-out infinite;
+  }
+
+  .feature h2 {
+    font-family: "Big Shoulders Stencil Display", sans-serif;
+    font-weight: 900; font-size: 3.2rem; line-height: .9;
+    margin: .8rem 0 .3rem; letter-spacing: -.02em;
+  }
+  .feature .jp-name {
+    font-family: "Zen Kaku Gothic New", sans-serif;
+    color: var(--bone-d); font-size: .95rem; letter-spacing: .4em;
+  }
+
+  .schematic {
+    margin: 1.4rem 0;
+    aspect-ratio: 4 / 3;
+    border: 1px solid var(--line);
+    background:
+      radial-gradient(circle at 50% 50%, rgba(212,255,58,.06), transparent 60%),
+      repeating-linear-gradient(90deg, var(--line-2) 0 1px, transparent 1px 28px),
+      repeating-linear-gradient(0deg,  var(--line-2) 0 1px, transparent 1px 28px);
+    position: relative;
+    overflow: hidden;
+  }
+  .schematic svg { display: block; width: 100%; height: 100%; }
+
+  .feature-specs {
+    display: grid; grid-template-columns: repeat(2, 1fr);
+    gap: .4rem 1.4rem;
+    font-family: "JetBrains Mono", monospace; font-size: .8rem;
+  }
+  .feature-specs div { display: flex; justify-content: space-between; gap: .5rem; padding: .25rem 0; border-bottom: 1px dotted var(--line); }
+  .feature-specs .k { color: var(--bone-d); text-transform: uppercase; letter-spacing: .15em; font-size: .68rem; }
+  .feature-specs .v { color: var(--bone); }
+
+  .feature-cta {
+    margin-top: 1.4rem;
+    display: grid; grid-template-columns: 1fr auto; gap: .8rem; align-items: stretch;
+  }
+  .price-block {
+    border: 1px solid var(--acid);
+    padding: .8rem 1rem;
+    display: flex; flex-direction: column; justify-content: center;
+  }
+  .price-block .lab { font-family: "JetBrains Mono", monospace; font-size: .65rem; color: var(--bone-d); letter-spacing: .25em; text-transform: uppercase; }
+  .price-block .num { font-family: "Big Shoulders Stencil Display", sans-serif; font-weight: 900; font-size: 2.1rem; color: var(--acid); line-height: 1; margin-top: .2rem;}
+  .price-block .alt { font-family: "JetBrains Mono", monospace; font-size: .7rem; color: var(--bone-d); margin-top: .3rem;}
+
+  .install-btn {
+    appearance: none; border: none; background: var(--acid); color: var(--carbon);
+    font-family: "Big Shoulders Stencil Display", sans-serif;
+    font-weight: 900; font-size: 1.1rem; letter-spacing: .04em;
+    padding: 0 1.6rem;
+    position: relative; overflow: hidden;
+    transition: transform .15s, background .15s;
+  }
+  .install-btn:hover { background: var(--bone); transform: translate(-2px,-2px); box-shadow: 4px 4px 0 var(--acid); }
+  .install-btn::after {
+    content: " →";
+    transition: transform .15s;
+  }
+  .install-btn:hover::after { transform: translateX(4px); }
+
+  /* ── marquee bar ─────────────────────────────── */
+  .marq {
+    border-block: 1px solid var(--line);
+    background: var(--carbon-2);
+    overflow: hidden;
+  }
+  .marq-track {
+    display: inline-flex; gap: 3rem; padding: .7rem 0;
+    white-space: nowrap;
+    font-family: "Big Shoulders Stencil Display", sans-serif;
+    font-weight: 900; font-size: 1.5rem; letter-spacing: .04em;
+    color: var(--bone-d);
+    animation: marquee 38s linear infinite;
+  }
+  .marq-track .acid { color: var(--acid); }
+  .marq-track .haz  { color: var(--hazard); }
+  .marq-track .sep  { color: var(--carbon-3); }
+
+  /* ── catalogue ───────────────────────────────── */
+  section.catalog { padding: 4rem 1.6rem 5rem; border-bottom: 1px solid var(--line); }
+
+  .section-head {
+    display: grid; grid-template-columns: auto 1fr auto;
+    align-items: end; gap: 2rem; margin-bottom: 2.4rem;
+    border-bottom: 1px solid var(--line); padding-bottom: 1rem;
+  }
+  .section-head h3 {
+    margin: 0;
+    font-family: "Big Shoulders Stencil Display", sans-serif;
+    font-weight: 900; font-size: clamp(2.4rem, 5vw, 4rem);
+    letter-spacing: -.015em; line-height: .9;
+  }
+  .section-head h3 .num {
+    color: var(--acid); font-family: "JetBrains Mono", monospace;
+    font-weight: 700; font-size: .35em; vertical-align: top;
+    letter-spacing: 0; margin-right: .5em;
+  }
+  .section-head .meta {
+    text-align: right; font-family: "JetBrains Mono", monospace;
+    font-size: .72rem; color: var(--bone-d); letter-spacing: .15em; text-transform: uppercase;
+  }
+  .section-head .meta strong { color: var(--acid); font-weight: 400; }
+
+  .filters {
+    display: flex; gap: .5rem; flex-wrap: wrap;
+    font-family: "JetBrains Mono", monospace; font-size: .72rem;
+    text-transform: uppercase; letter-spacing: .18em;
+  }
+  .filters button {
+    appearance: none; border: 1px solid var(--line);
+    background: transparent; color: var(--bone-d);
+    padding: .4rem .8rem;
+    transition: border-color .15s, color .15s, background .15s;
+  }
+  .filters button:hover, .filters button.on {
+    border-color: var(--acid); color: var(--carbon); background: var(--acid);
+  }
+
+  .grid-products {
+    margin-top: 2rem;
+    display: grid; grid-template-columns: repeat(12, 1fr);
+    gap: 1px; background: var(--line);
+    border: 1px solid var(--line);
+  }
+  .product {
+    background: var(--carbon);
+    grid-column: span 4;
+    padding: 1.5rem 1.4rem 1.6rem;
+    position: relative; isolation: isolate;
+    transition: background .2s;
+  }
+  .product:hover { background: var(--carbon-2); }
+  .product:hover .target { opacity: 1; }
+
+  /* targeting reticle corners */
+  .target { position: absolute; inset: 8px; pointer-events: none; opacity: 0; transition: opacity .2s; }
+  .target::before, .target::after,
+  .target i::before, .target i::after {
+    content: ""; position: absolute; width: 16px; height: 16px;
+    border: 1.5px solid var(--acid);
+  }
+  .target::before { top: 0; left: 0; border-right: none; border-bottom: none; }
+  .target::after  { top: 0; right: 0; border-left: none; border-bottom: none; }
+  .target i { display: contents; }
+  .target i::before { bottom: 0; left: 0; border-right: none; border-top: none; }
+  .target i::after  { bottom: 0; right: 0; border-left: none; border-top: none; }
+
+  .p-row {
+    display: flex; justify-content: space-between; align-items: center;
+    font-family: "JetBrains Mono", monospace; font-size: .65rem;
+    text-transform: uppercase; letter-spacing: .2em;
+    color: var(--bone-d);
+  }
+  .p-status {
+    padding: .15rem .5rem; border: 1px solid currentColor;
+  }
+  .p-status.avail { color: var(--acid); }
+  .p-status.wait  { color: var(--surgical); }
+  .p-status.rest  { color: var(--hazard); }
+
+  .product h4 {
+    font-family: "Big Shoulders Stencil Display", sans-serif;
+    font-weight: 900; font-size: 2rem; line-height: .92;
+    margin: 1rem 0 .3rem; letter-spacing: -.01em;
+  }
+  .product .jp {
+    font-family: "Zen Kaku Gothic New", sans-serif;
+    color: var(--bone-d); font-size: .75rem; letter-spacing: .35em;
+  }
+
+  .product .visual {
+    margin: 1rem 0;
+    aspect-ratio: 1 / 1;
+    border: 1px solid var(--line);
+    background:
+      radial-gradient(circle at 30% 30%, rgba(212,255,58,.07), transparent 60%),
+      repeating-linear-gradient(45deg, var(--line-2) 0 1px, transparent 1px 18px);
+    display: grid; place-items: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .product .visual svg { width: 80%; height: 80%; }
+
+  .product .specs {
+    font-family: "JetBrains Mono", monospace;
+    font-size: .72rem;
+  }
+  .product .specs div {
+    display: flex; justify-content: space-between;
+    padding: .25rem 0; border-bottom: 1px dotted var(--line);
+  }
+  .product .specs .k { color: var(--bone-d); text-transform: uppercase; letter-spacing: .15em; font-size: .62rem;}
+  .product .specs .v { color: var(--bone); }
+
+  .product .foot {
+    display: flex; justify-content: space-between; align-items: end;
+    margin-top: 1.2rem;
+  }
+  .product .price {
+    font-family: "Big Shoulders Stencil Display", sans-serif;
+    font-weight: 900; font-size: 1.7rem; color: var(--acid); line-height: 1;
+  }
+  .product .price small { display: block; font-family: "JetBrains Mono", monospace; font-size: .58rem; letter-spacing: .25em; color: var(--bone-d); margin-top: .25rem;}
+  .product .add {
+    appearance: none; background: transparent; color: var(--bone);
+    border: 1px solid var(--bone); padding: .5rem .9rem;
+    font-family: "JetBrains Mono", monospace; font-size: .68rem;
+    text-transform: uppercase; letter-spacing: .2em;
+    transition: background .15s, color .15s, border-color .15s;
+  }
+  .product .add:hover { background: var(--acid); color: var(--carbon); border-color: var(--acid); }
+
+  /* highlight cards */
+  .product.big { grid-column: span 8; display: grid; grid-template-columns: 1.1fr 1fr; gap: 1.6rem; }
+  .product.big .visual { aspect-ratio: auto; height: 100%; min-height: 280px;}
+  .product.big h4 { font-size: 2.8rem; }
+
+  /* warning ribbon on restricted */
+  .ribbon {
+    position: absolute; top: 18px; right: -42px;
+    transform: rotate(35deg);
+    background: var(--hazard); color: var(--carbon);
+    font-family: "Big Shoulders Stencil Display", sans-serif;
+    font-weight: 900; font-size: .85rem; letter-spacing: .2em;
+    padding: .1rem 3rem;
+    z-index: 2;
+  }
+
+  /* ── installation protocol ───────────────────── */
+  section.protocol {
+    padding: 4rem 1.6rem;
+    border-bottom: 1px solid var(--line);
+    background: linear-gradient(180deg, var(--carbon) 0%, var(--carbon-2) 100%);
+  }
+  .proto-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem; margin-top: 2rem;
+  }
+  .step {
+    border: 1px solid var(--line);
+    padding: 1.4rem; position: relative;
+    background: var(--carbon);
+  }
+  .step .n {
+    font-family: "Big Shoulders Stencil Display", sans-serif;
+    font-weight: 900; font-size: 4.5rem; color: var(--acid);
+    line-height: .8; margin-bottom: 1rem;
+    -webkit-text-stroke: 1.5px var(--acid);
+    -webkit-text-fill-color: transparent;
+  }
+  .step h5 {
+    font-family: "Big Shoulders Stencil Display", sans-serif;
+    font-weight: 700; font-size: 1.4rem; letter-spacing: 0;
+    margin: 0 0 .4rem;
+  }
+  .step p { margin: 0; font-size: .9rem; color: var(--bone-d); line-height: 1.55;}
+  .step .dur {
+    margin-top: 1rem; padding-top: .8rem;
+    border-top: 1px dashed var(--line);
+    font-family: "JetBrains Mono", monospace; font-size: .68rem;
+    text-transform: uppercase; letter-spacing: .2em; color: var(--surgical);
+  }
+
+  /* ── compliance / warnings ───────────────────── */
+  section.compliance {
+    padding: 4rem 1.6rem 5rem;
+    background:
+      repeating-linear-gradient(45deg, var(--carbon) 0 36px, var(--carbon-2) 36px 72px);
+    border-bottom: 1px solid var(--line);
+  }
+  .warn-grid {
+    display: grid; grid-template-columns: 1.3fr 1fr;
+    gap: 3rem; align-items: start;
+  }
+  .warn-grid h3 {
+    font-family: "Big Shoulders Stencil Display", sans-serif;
+    font-weight: 900; font-size: clamp(2.4rem, 5vw, 4.2rem);
+    line-height: .9; margin: 0; letter-spacing: -.01em;
+  }
+  .warn-grid h3 .stroke {
+    -webkit-text-stroke: 1.5px var(--hazard);
+    -webkit-text-fill-color: transparent;
+  }
+  .warn-grid p { font-family: "Zen Old Mincho", serif; color: var(--bone-d); font-size: 1.05rem; line-height: 1.65; max-width: 52ch;}
+  .warn-grid p em { color: var(--hazard); font-style: normal; }
+
+  .hazard-card {
+    border: 2px solid var(--hazard);
+    padding: 1.4rem; position: relative;
+  }
+  .hazard-card::before {
+    content: "⚠ ВНИМАНИЕ ⚠";
+    position: absolute; top: -.7rem; left: 1rem;
+    background: var(--carbon); padding: 0 .6rem;
+    color: var(--hazard);
+    font-family: "Big Shoulders Stencil Display", sans-serif;
+    font-weight: 900; font-size: .9rem; letter-spacing: .25em;
+  }
+  .hazard-card ul {
+    margin: 1rem 0 0; padding: 0; list-style: none;
+    font-family: "JetBrains Mono", monospace; font-size: .82rem;
+  }
+  .hazard-card li {
+    display: grid; grid-template-columns: auto 1fr;
+    gap: .8rem; padding: .55rem 0;
+    border-bottom: 1px dashed var(--line);
+  }
+  .hazard-card li::before {
+    content: ""; width: 8px; height: 8px;
+    border: 1.5px solid var(--hazard);
+    margin-top: .35rem;
+    animation: blink 1.4s steps(1) infinite;
+  }
+  .hazard-card .code { color: var(--bone-d); font-size: .68rem; letter-spacing: .2em; }
+  .hazard-card .desc { color: var(--bone); }
+
+  /* ── footer ──────────────────────────────────── */
+  footer {
+    padding: 3rem 1.6rem 2rem;
+    background: var(--carbon-2);
+    border-top: 1px solid var(--line);
+  }
+  .foot-top {
+    display: grid; grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 2.4rem; padding-bottom: 2rem;
+    border-bottom: 1px solid var(--line);
+  }
+  .foot-brand h6 {
+    font-family: "Big Shoulders Stencil Display", sans-serif;
+    font-weight: 900; font-size: 2.4rem; margin: 0 0 .6rem;
+  }
+  .foot-brand h6 .slash { color: var(--acid); }
+  .foot-brand p { color: var(--bone-d); max-width: 36ch; font-size: .95rem; }
+
+  .foot-col h6 {
+    margin: 0 0 .8rem;
+    font-family: "JetBrains Mono", monospace; font-size: .7rem;
+    text-transform: uppercase; letter-spacing: .25em; color: var(--acid);
+  }
+  .foot-col ul { list-style: none; margin: 0; padding: 0;
+    font-family: "JetBrains Mono", monospace; font-size: .82rem; line-height: 1.9;
+    color: var(--bone-d);
+  }
+  .foot-col li:hover { color: var(--acid); cursor: none; }
+
+  .foot-bottom {
+    padding-top: 1.4rem;
+    display: flex; justify-content: space-between; gap: 1.4rem;
+    font-family: "JetBrains Mono", monospace; font-size: .7rem;
+    text-transform: uppercase; letter-spacing: .2em; color: var(--bone-d);
+    flex-wrap: wrap;
+  }
+  .foot-bottom .crd { color: var(--acid); }
+
+  /* hex pattern strip */
+  .hex-strip {
+    height: 28px;
+    background:
+      linear-gradient(90deg, transparent, var(--carbon) 95%),
+      repeating-linear-gradient(60deg, var(--line) 0 1px, transparent 1px 14px),
+      repeating-linear-gradient(-60deg, var(--line) 0 1px, transparent 1px 14px),
+      repeating-linear-gradient(0deg, var(--line) 0 1px, transparent 1px 14px);
+    border-block: 1px solid var(--line);
+  }
+
+  /* ── ghost cursor (target reticle) ───────────── */
+  .reticle {
+    position: fixed; top: 0; left: 0;
+    width: 36px; height: 36px;
+    pointer-events: none; z-index: 9999;
+    transform: translate(-50%, -50%);
+    mix-blend-mode: difference;
+  }
+  .reticle::before, .reticle::after {
+    content: ""; position: absolute; background: var(--acid);
+  }
+  .reticle::before { top: 50%; left: 0; right: 0; height: 1px; transform: translateY(-.5px);}
+  .reticle::after  { left: 50%; top: 0; bottom: 0; width: 1px; transform: translateX(-.5px);}
+  .reticle i {
+    position: absolute; inset: 0; border: 1px solid var(--acid);
+    border-radius: 50%;
+    animation: spin 8s linear infinite;
+  }
+  .reticle i::before {
+    content: ""; position: absolute; inset: 6px; border: 1px dashed var(--acid);
+    border-radius: 50%;
+    animation: spinR 12s linear infinite;
+  }
+
+  /* ── responsive ──────────────────────────────── */
+  @media (max-width: 980px) {
+    .hero-grid { grid-template-columns: 1fr; }
+    .product { grid-column: span 6; }
+    .product.big { grid-column: span 12; grid-template-columns: 1fr; }
+    .proto-grid { grid-template-columns: repeat(2, 1fr); }
+    .warn-grid { grid-template-columns: 1fr; }
+    .foot-top { grid-template-columns: 1fr 1fr; }
+    nav.top { grid-template-columns: auto 1fr auto; }
+    .nav-links { display: none; }
+  }
+  @media (max-width: 600px) {
+    .product { grid-column: span 12; }
+    .proto-grid { grid-template-columns: 1fr; }
+    .foot-top { grid-template-columns: 1fr; }
+    .hero-meta { grid-template-columns: 1fr; }
+    .hero-meta div { border-right: none; border-bottom: 1px solid var(--line); padding-bottom: .8rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="reticle" id="reticle"><i></i></div>
+<div class="scan-line"></div>
+
+<!-- ── NAV ─────────────────────────────────────── -->
+<nav class="top">
+  <a href="#" class="brand">
+    KIRA<span class="slash">//</span>MOD <span class="ja">神経改造</span>
+  </a>
+  <div class="nav-links">
+    <a href="#catalog">каталог</a>
+    <a href="#protocol">установка</a>
+    <a href="#compliance">регламент</a>
+    <a href="#" style="color:var(--hazard)">└ чёрный рынок</a>
+  </div>
+  <div class="clock">
+    <span class="dot"></span>
+    <span id="clk">SHIBUYA · 03:47:21</span>
+  </div>
+  <button class="cart-btn">⌬ корзина · 02</button>
+</nav>
+
+<!-- ── HERO ────────────────────────────────────── -->
+<header class="hero">
+  <div class="hero-grid">
+    <div>
+      <div class="label" style="margin-bottom:1.4rem;">
+        ⏵ серия mk.07 · поставка 2087 · регион ⌬ — открыт
+      </div>
+      <h1>
+        <span class="l1">ХРОМ</span>
+        <span class="l2">ДЛЯ&nbsp;ТЕХ,</span>
+        <span class="l3">КТО&nbsp;НЕ&nbsp;СПИТ</span>
+      </h1>
+      <p class="hero-sub">
+        Сертифицированные импланты <em>седьмого поколения</em>.
+        Военная сборка. Гражданская лицензия не требуется —
+        мы выдаём её сами, на месте, в течение четырёх минут.
+      </p>
+
+      <div class="hero-meta">
+        <div>
+          <div class="label">в наличии</div>
+          <div class="v" id="stock">— ед.</div>
+        </div>
+        <div>
+          <div class="label">скорость синхронизации</div>
+          <div class="v">≤ 4.2 <small>мс</small></div>
+        </div>
+        <div>
+          <div class="label">срок гарантии</div>
+          <div class="v">∞ <small>/ при выживании</small></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- featured card -->
+    <aside class="feature">
+      <span class="corner-tr"></span><span class="corner-bl"></span>
+      <div class="feature-head">
+        <span>модель ・ kira-ø7</span>
+        <span class="live">передача в эфире</span>
+      </div>
+      <h2>KIRA·Ø7<br>OCULAR<sup style="color:var(--acid); font-size:.4em;">★</sup></h2>
+      <div class="jp-name">キラ・オキュラー</div>
+
+      <div class="schematic">
+        <svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <!-- eye schematic -->
+          <g fill="none" stroke="#d4ff3a" stroke-width="1">
+            <ellipse cx="200" cy="150" rx="140" ry="70"/>
+            <ellipse cx="200" cy="150" rx="100" ry="50"/>
+            <circle cx="200" cy="150" r="40"/>
+            <circle cx="200" cy="150" r="22" fill="#0b0c09" stroke="#d4ff3a"/>
+            <circle cx="200" cy="150" r="10" fill="#d4ff3a"/>
+            <!-- crosshairs -->
+            <line x1="20" y1="150" x2="60" y2="150"/>
+            <line x1="340" y1="150" x2="380" y2="150"/>
+            <line x1="200" y1="20" x2="200" y2="70"/>
+            <line x1="200" y1="230" x2="200" y2="280"/>
+            <!-- markers -->
+            <g stroke-dasharray="2 4" opacity=".5">
+              <circle cx="200" cy="150" r="120"/>
+              <circle cx="200" cy="150" r="80"/>
+            </g>
+          </g>
+          <!-- labels -->
+          <g font-family="JetBrains Mono, monospace" font-size="9" fill="#b5b09e">
+            <text x="20" y="40">[A] CORTEX-LINK</text>
+            <text x="20" y="270">[B] IRIS-LENS Ø22</text>
+            <text x="300" y="40" text-anchor="start">[C] APERTURE f/0.7</text>
+            <text x="300" y="270" text-anchor="start">[D] ZOOM ×128</text>
+          </g>
+          <!-- ticks -->
+          <g stroke="#4dd9ff" stroke-width="1">
+            <line x1="0" y1="295" x2="400" y2="295"/>
+            <g>
+              <line x1="20" y1="290" x2="20" y2="295"/>
+              <line x1="60" y1="290" x2="60" y2="295"/>
+              <line x1="100" y1="290" x2="100" y2="295"/>
+              <line x1="140" y1="290" x2="140" y2="295"/>
+              <line x1="180" y1="290" x2="180" y2="295"/>
+              <line x1="220" y1="285" x2="220" y2="295"/>
+              <line x1="260" y1="290" x2="260" y2="295"/>
+              <line x1="300" y1="290" x2="300" y2="295"/>
+              <line x1="340" y1="290" x2="340" y2="295"/>
+              <line x1="380" y1="290" x2="380" y2="295"/>
+            </g>
+          </g>
+        </svg>
+      </div>
+
+      <div class="feature-specs">
+        <div><span class="k">syncrate</span><span class="v">2.1 мс</span></div>
+        <div><span class="k">aperture</span><span class="v">f/0.7</span></div>
+        <div><span class="k">zoom</span><span class="v">×128 опт.</span></div>
+        <div><span class="k">spectrum</span><span class="v">UV→IR</span></div>
+        <div><span class="k">battery</span><span class="v">14 лет</span></div>
+        <div><span class="k">install</span><span class="v">44 мин</span></div>
+      </div>
+
+      <div class="feature-cta">
+        <div class="price-block">
+          <div class="lab">единичный комплект</div>
+          <div class="num">¥ 1 487 000</div>
+          <div class="alt">≈ ₿ 4.31 · биткарта · крипто-чек</div>
+        </div>
+        <button class="install-btn">УСТАНОВИТЬ</button>
+      </div>
+    </aside>
+  </div>
+</header>
+
+<!-- ── MARQUEE ─────────────────────────────────── -->
+<div class="marq">
+  <div class="marq-track" id="marq">
+    <span class="acid">⏵ ПАРТИЯ MK.07</span>
+    <span class="sep">⌬</span>
+    <span>SHIBUYA / CHIBA / EKB / BAKU</span>
+    <span class="sep">⌬</span>
+    <span class="haz">⚠ ⚠ ⚠ ОГРАНИЧЕННАЯ СЕРИЯ ⚠ ⚠ ⚠</span>
+    <span class="sep">⌬</span>
+    <span>NEURAL.BANDWIDTH ▸ 14.8 ГБ/с</span>
+    <span class="sep">⌬</span>
+    <span class="acid">「無音」モデル NEW</span>
+    <span class="sep">⌬</span>
+    <span>SHIPPING ▸ Drone-04</span>
+    <span class="sep">⌬</span>
+    <!-- duplicate -->
+    <span class="acid">⏵ ПАРТИЯ MK.07</span>
+    <span class="sep">⌬</span>
+    <span>SHIBUYA / CHIBA / EKB / BAKU</span>
+    <span class="sep">⌬</span>
+    <span class="haz">⚠ ⚠ ⚠ ОГРАНИЧЕННАЯ СЕРИЯ ⚠ ⚠ ⚠</span>
+    <span class="sep">⌬</span>
+    <span>NEURAL.BANDWIDTH ▸ 14.8 ГБ/с</span>
+    <span class="sep">⌬</span>
+    <span class="acid">「無音」モデル NEW</span>
+    <span class="sep">⌬</span>
+    <span>SHIPPING ▸ Drone-04</span>
+    <span class="sep">⌬</span>
+  </div>
+</div>
+
+<!-- ── CATALOG ─────────────────────────────────── -->
+<section class="catalog" id="catalog">
+  <div class="section-head">
+    <h3><span class="num">02/</span>КАТАЛОГ <span class="acid" style="font-size:.5em; vertical-align:top;">⌬</span></h3>
+    <div class="filters">
+      <button class="on">ВСЁ</button>
+      <button>НЕЙРО</button>
+      <button>МОТОРНЫЕ</button>
+      <button>ОПТИКА</button>
+      <button>СЕНСОРНЫЕ</button>
+      <button style="color:var(--hazard); border-color:var(--hazard);">└ ЧЁРНЫЕ</button>
+    </div>
+    <div class="meta">
+      позиций · <strong>06</strong><br>
+      обновлено · 03:47 jst
+    </div>
+  </div>
+
+  <div class="grid-products">
+
+    <!-- 1 — big -->
+    <article class="product big">
+      <span class="target"><i></i></span>
+      <div>
+        <div class="p-row">
+          <span>kira-mk.07 · neuro</span>
+          <span class="p-status avail">⏵ в наличии</span>
+        </div>
+        <h4>SHIBUYA<br>NEURAL LACE</h4>
+        <div class="jp">渋谷ニューラル・レース</div>
+        <p style="color:var(--bone-d); font-size:.95rem; max-width:38ch; margin-top:1rem;">
+          Сетка из медицинского графена, врастает в кортекс
+          за <em style="color:var(--acid); font-style:normal;">14 дней</em>.
+          Полная синхронизация с городскими сетями. Без ощущения «другого мозга».
+        </p>
+        <div class="specs" style="margin-top:1.2rem;">
+          <div><span class="k">плотность узлов</span><span class="v">10⁹ / см²</span></div>
+          <div><span class="k">bandwidth</span><span class="v">14.8 ГБ/с</span></div>
+          <div><span class="k">срок приживления</span><span class="v">14 ± 3 сут</span></div>
+          <div><span class="k">совместимость</span><span class="v">v2 / v3 / v3+</span></div>
+        </div>
+        <div class="foot">
+          <div class="price">¥ 3 240 000<small>≈ ₿ 9.38</small></div>
+          <button class="add">+ в корзину</button>
+        </div>
+      </div>
+      <div class="visual">
+        <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <g fill="none" stroke="#d4ff3a" stroke-width="1">
+            <!-- brain outline -->
+            <path d="M40 100 Q40 50 100 45 Q160 50 160 100 Q160 150 100 155 Q40 150 40 100 Z"/>
+            <!-- lace mesh -->
+            <g stroke-width=".6" opacity=".7">
+              <path d="M50 70 Q100 60 150 70"/>
+              <path d="M48 90 Q100 80 152 90"/>
+              <path d="M48 110 Q100 100 152 110"/>
+              <path d="M50 130 Q100 120 150 130"/>
+              <path d="M70 50 Q70 100 70 150"/>
+              <path d="M100 45 Q100 100 100 155"/>
+              <path d="M130 50 Q130 100 130 150"/>
+            </g>
+            <!-- nodes -->
+            <g fill="#d4ff3a" stroke="none">
+              <circle cx="70" cy="70" r="2"/>
+              <circle cx="100" cy="80" r="2"/>
+              <circle cx="130" cy="70" r="2"/>
+              <circle cx="70" cy="110" r="2"/>
+              <circle cx="100" cy="100" r="3"/>
+              <circle cx="130" cy="110" r="2"/>
+              <circle cx="100" cy="130" r="2"/>
+            </g>
+          </g>
+          <g font-family="JetBrains Mono, monospace" font-size="6" fill="#b5b09e">
+            <text x="10" y="195">CORTEX.MESH v.07</text>
+            <text x="130" y="195">▸▸▸ STABLE</text>
+          </g>
+        </svg>
+      </div>
+    </article>
+
+    <!-- 2 -->
+    <article class="product">
+      <span class="target"><i></i></span>
+      <div class="p-row">
+        <span>kira-mk.06 · motor</span>
+        <span class="p-status wait">в листе ожид.</span>
+      </div>
+      <h4>KENGOKU<br>EXO·SPINE</h4>
+      <div class="jp">剣豪エクソスパイン</div>
+      <div class="visual">
+        <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <g fill="none" stroke="#d4ff3a" stroke-width="1">
+            <line x1="100" y1="20" x2="100" y2="180"/>
+            <g>
+              <ellipse cx="100" cy="35" rx="14" ry="6"/>
+              <ellipse cx="100" cy="55" rx="14" ry="6"/>
+              <ellipse cx="100" cy="75" rx="14" ry="6"/>
+              <ellipse cx="100" cy="95" rx="14" ry="6"/>
+              <ellipse cx="100" cy="115" rx="14" ry="6"/>
+              <ellipse cx="100" cy="135" rx="14" ry="6"/>
+              <ellipse cx="100" cy="155" rx="14" ry="6"/>
+            </g>
+            <line x1="70" y1="35" x2="40" y2="35" stroke-dasharray="2 3"/>
+            <line x1="130" y1="155" x2="170" y2="155" stroke-dasharray="2 3"/>
+          </g>
+          <g font-family="JetBrains Mono, monospace" font-size="6" fill="#b5b09e">
+            <text x="10" y="40">L1</text>
+            <text x="170" y="160" text-anchor="end">L7</text>
+          </g>
+        </svg>
+      </div>
+      <div class="specs">
+        <div><span class="k">материал</span><span class="v">Ti-6Al · композит</span></div>
+        <div><span class="k">прирост силы</span><span class="v">+340%</span></div>
+        <div><span class="k">установка</span><span class="v">6 ч 40 мин</span></div>
+      </div>
+      <div class="foot">
+        <div class="price">¥ 5 980 000<small>≈ ₿ 17.3</small></div>
+        <button class="add">+ в&nbsp;корзину</button>
+      </div>
+    </article>
+
+    <!-- 3 -->
+    <article class="product">
+      <span class="target"><i></i></span>
+      <div class="p-row">
+        <span>kira-mk.07 · sensor</span>
+        <span class="p-status avail">⏵ в наличии</span>
+      </div>
+      <h4>NORAGAMI<br>AUDIO·X</h4>
+      <div class="jp">ノラガミ・オーディオX</div>
+      <div class="visual">
+        <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <g fill="none" stroke="#d4ff3a" stroke-width="1">
+            <path d="M60 100 Q40 60 80 40 Q130 30 150 70 Q170 110 140 140 Q110 165 80 150 Q55 135 60 100 Z"/>
+            <path d="M80 100 Q70 75 95 65 Q120 60 130 85 Q140 110 120 125 Q100 135 85 125"/>
+            <circle cx="105" cy="100" r="6"/>
+            <circle cx="105" cy="100" r="2" fill="#d4ff3a"/>
+            <g opacity=".6" stroke-dasharray="2 3">
+              <path d="M150 50 Q180 80 175 110"/>
+              <path d="M160 40 Q200 80 195 130"/>
+              <path d="M170 30 Q220 85 215 150"/>
+            </g>
+          </g>
+          <g font-family="JetBrains Mono, monospace" font-size="6" fill="#b5b09e">
+            <text x="10" y="195">RNG 8Hz ▸ 220kHz</text>
+          </g>
+        </svg>
+      </div>
+      <div class="specs">
+        <div><span class="k">диапазон</span><span class="v">8 → 220 кГц</span></div>
+        <div><span class="k">шумоподавл.</span><span class="v">—74 дБ</span></div>
+        <div><span class="k">режимы</span><span class="v">07</span></div>
+      </div>
+      <div class="foot">
+        <div class="price">¥ 890 000<small>≈ ₿ 2.58</small></div>
+        <button class="add">+ в&nbsp;корзину</button>
+      </div>
+    </article>
+
+    <!-- 4 -->
+    <article class="product">
+      <span class="target"><i></i></span>
+      <div class="p-row">
+        <span>kira-mk.05 · armor</span>
+        <span class="p-status avail">⏵ в наличии</span>
+      </div>
+      <h4>KOHAKU<br>DERMAL·07</h4>
+      <div class="jp">琥珀ダーマル・プレート</div>
+      <div class="visual">
+        <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <g fill="none" stroke="#d4ff3a" stroke-width="1">
+            <polygon points="40,60 80,40 140,40 170,80 160,140 110,165 50,150 30,110"/>
+            <g opacity=".55">
+              <polygon points="40,60 80,40 70,80 50,90"/>
+              <polygon points="80,40 140,40 130,75 95,80"/>
+              <polygon points="140,40 170,80 150,100 125,80"/>
+              <polygon points="170,80 160,140 130,135 145,105"/>
+              <polygon points="160,140 110,165 105,135 130,130"/>
+              <polygon points="110,165 50,150 70,125 100,135"/>
+              <polygon points="50,150 30,110 55,100 70,125"/>
+              <polygon points="30,110 40,60 60,90 55,100"/>
+            </g>
+          </g>
+        </svg>
+      </div>
+      <div class="specs">
+        <div><span class="k">класс защиты</span><span class="v">IV-A</span></div>
+        <div><span class="k">калибр</span><span class="v">≤ 7.62×51</span></div>
+        <div><span class="k">вес</span><span class="v">+2.4 кг</span></div>
+      </div>
+      <div class="foot">
+        <div class="price">¥ 2 150 000<small>≈ ₿ 6.22</small></div>
+        <button class="add">+ в&nbsp;корзину</button>
+      </div>
+    </article>
+
+    <!-- 5 -->
+    <article class="product">
+      <span class="target"><i></i></span>
+      <div class="p-row">
+        <span>kira-mk.07 · deck</span>
+        <span class="p-status avail">⏵ в наличии</span>
+      </div>
+      <h4>AKASHI<br>WRIST·DECK</h4>
+      <div class="jp">明石・リストデック</div>
+      <div class="visual">
+        <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <g fill="none" stroke="#d4ff3a" stroke-width="1">
+            <rect x="40" y="70" width="120" height="60" rx="4"/>
+            <rect x="50" y="80" width="100" height="40" rx="2"/>
+            <line x1="50" y1="90" x2="150" y2="90" opacity=".5"/>
+            <line x1="50" y1="100" x2="120" y2="100" opacity=".5"/>
+            <line x1="50" y1="110" x2="140" y2="110" opacity=".5"/>
+            <g fill="#d4ff3a" stroke="none">
+              <rect x="135" y="98" width="6" height="3"/>
+              <rect x="135" y="108" width="10" height="3"/>
+              <rect x="135" y="88" width="4" height="3"/>
+            </g>
+            <rect x="60" y="138" width="80" height="6" rx="3" opacity=".4"/>
+            <rect x="60" y="56" width="80" height="6" rx="3" opacity=".4"/>
+          </g>
+          <g font-family="JetBrains Mono, monospace" font-size="5" fill="#b5b09e">
+            <text x="50" y="160">CPU 14.0 nm · 8 cores</text>
+          </g>
+        </svg>
+      </div>
+      <div class="specs">
+        <div><span class="k">процессор</span><span class="v">8c · 14 нм</span></div>
+        <div><span class="k">память</span><span class="v">2 ТБ NVMe</span></div>
+        <div><span class="k">интерфейс</span><span class="v">USB-Σ / wetwire</span></div>
+      </div>
+      <div class="foot">
+        <div class="price">¥ 740 000<small>≈ ₿ 2.14</small></div>
+        <button class="add">+ в&nbsp;корзину</button>
+      </div>
+    </article>
+
+    <!-- 6 — restricted -->
+    <article class="product">
+      <span class="ribbon">RESTRICTED</span>
+      <span class="target"><i></i></span>
+      <div class="p-row">
+        <span>kira-mk.∅ · нелегально</span>
+        <span class="p-status rest">⚠ запрещён</span>
+      </div>
+      <h4>MUON<br>REFLEX·09</h4>
+      <div class="jp">ミューオン・リフレックス</div>
+      <div class="visual">
+        <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <g fill="none" stroke="#ff4d1f" stroke-width="1">
+            <circle cx="100" cy="100" r="60"/>
+            <circle cx="100" cy="100" r="40"/>
+            <circle cx="100" cy="100" r="20"/>
+            <circle cx="100" cy="100" r="3" fill="#ff4d1f"/>
+            <g stroke-dasharray="2 3" opacity=".5">
+              <circle cx="100" cy="100" r="80"/>
+              <circle cx="100" cy="100" r="95"/>
+            </g>
+            <line x1="20" y1="100" x2="40" y2="100"/>
+            <line x1="160" y1="100" x2="180" y2="100"/>
+            <line x1="100" y1="20" x2="100" y2="40"/>
+            <line x1="100" y1="160" x2="100" y2="180"/>
+          </g>
+          <g font-family="JetBrains Mono, monospace" font-size="6" fill="#ff4d1f">
+            <text x="10" y="20">⚠ ОБРАЩЕНИЕ ОГРАНИЧЕНО</text>
+          </g>
+        </svg>
+      </div>
+      <div class="specs">
+        <div><span class="k">время реакции</span><span class="v">0.04 мс</span></div>
+        <div><span class="k">риск отказа</span><span class="v" style="color:var(--hazard);">14%</span></div>
+        <div><span class="k">сертификат</span><span class="v" style="color:var(--hazard);">— нет</span></div>
+      </div>
+      <div class="foot">
+        <div class="price" style="color:var(--hazard);">по&nbsp;запросу<small>только из рук</small></div>
+        <button class="add" style="border-color:var(--hazard); color:var(--hazard);">⚠ запрос</button>
+      </div>
+    </article>
+
+  </div>
+</section>
+
+<!-- ── PROTOCOL ────────────────────────────────── -->
+<section class="protocol" id="protocol">
+  <div class="section-head">
+    <h3><span class="num">03/</span>ПРОТОКОЛ&nbsp;УСТАНОВКИ</h3>
+    <div></div>
+    <div class="meta">
+      продолж. ▸ <strong>4 ч 12 мин</strong><br>
+      выживаемость ▸ <strong>99.4%</strong>
+    </div>
+  </div>
+
+  <div class="proto-grid">
+    <div class="step">
+      <div class="n">01</div>
+      <h5>СКАН СОВМЕСТИМОСТИ</h5>
+      <p>МРТ + биометрия + дамп памяти. Если у вас уже есть имплант — мы вежливо его игнорируем.</p>
+      <div class="dur">14 мин · вестибюль 神</div>
+    </div>
+    <div class="step">
+      <div class="n">02</div>
+      <h5>АНЕСТЕЗИЯ ЛОКАЛЬНАЯ</h5>
+      <p>Не общая. Вы должны слышать, как мы работаем — это часть протокола.</p>
+      <div class="dur">04 мин · отд. 02-Б</div>
+    </div>
+    <div class="step">
+      <div class="n">03</div>
+      <h5>МОНТАЖ</h5>
+      <p>Точность: ±0.02 мм. Хирург-робот KIRA-MED, надзор живого специалиста (опционально).</p>
+      <div class="dur">3 ч · стерильный бокс</div>
+    </div>
+    <div class="step">
+      <div class="n">04</div>
+      <h5>КАЛИБРОВКА · ВЫХОД</h5>
+      <p>Подписание отказа от прежней личности. Чай. Лёд. Такси.</p>
+      <div class="dur">54 мин · фойе ⌬</div>
+    </div>
+  </div>
+</section>
+
+<!-- ── COMPLIANCE ──────────────────────────────── -->
+<section class="compliance" id="compliance">
+  <div class="warn-grid">
+    <div>
+      <div class="label" style="margin-bottom:1.2rem; color:var(--hazard);">
+        ⏵ регламент &amp; правовая оговорка
+      </div>
+      <h3>
+        мы НЕ <span class="stroke">врачи.</span><br>
+        мы <span class="acid">инженеры</span><br>
+        мяса.
+      </h3>
+      <p style="margin-top:1.6rem;">
+        Установка любого изделия KIRA//MOD приравнивается к
+        <em>добровольному отказу от гарантий вашего тела</em>.
+        Тело продолжает работать — но уже на наших условиях.
+      </p>
+      <p>
+        Все процедуры проводятся в соответствии с регламентом
+        <span class="mono acid">SHIBUYA-Σ.04 / 2087</span>,
+        который мы написали вчера в баре «Куродзима».
+      </p>
+    </div>
+
+    <aside class="hazard-card">
+      <ul>
+        <li><span class="code">[Σ-01]</span><span class="desc">Не садитесь за руль в течение 11 часов после установки нейро-кружева.</span></li>
+        <li><span class="code">[Σ-02]</span><span class="desc">Запах гари из ушей в первые 48 ч — нормален. Из глаз — обратитесь.</span></li>
+        <li><span class="code">[Σ-03]</span><span class="desc">Воспоминания, не принадлежащие вам, считать «вторичной нагрузкой».</span></li>
+        <li><span class="code">[Σ-04]</span><span class="desc">Сны на корейском после Kohaku-плит — побочный эффект сплава.</span></li>
+        <li><span class="code">[Σ-05]</span><span class="desc">Серия Muon · ∅9 — нелегальна в 11 префектурах. Полный список — у курьера.</span></li>
+      </ul>
+    </aside>
+  </div>
+</section>
+
+<div class="hex-strip"></div>
+
+<!-- ── FOOTER ──────────────────────────────────── -->
+<footer>
+  <div class="foot-top">
+    <div class="foot-brand">
+      <h6>KIRA<span class="slash">//</span>MOD</h6>
+      <p>
+        Боди-инженерия седьмого поколения.<br>
+        Сборка — Чиба. Сертификация — мы сами.<br>
+        Лицензия № <span class="mono" style="color:var(--acid)">Σ-∅∅14-NN</span>.
+      </p>
+    </div>
+    <div class="foot-col">
+      <h6>каталог</h6>
+      <ul>
+        <li>· нейро</li>
+        <li>· оптика</li>
+        <li>· моторика</li>
+        <li>· броня</li>
+        <li>· └ чёрный рынок</li>
+      </ul>
+    </div>
+    <div class="foot-col">
+      <h6>офисы</h6>
+      <ul>
+        <li>· SHIBUYA — главный</li>
+        <li>· CHIBA — сборка</li>
+        <li>· EKB — славянский узел</li>
+        <li>· BAKU — южный канал</li>
+      </ul>
+    </div>
+    <div class="foot-col">
+      <h6>связь</h6>
+      <ul>
+        <li>· сигнал.: <span class="mono">+81-神-0407</span></li>
+        <li>· курьер: drone-04</li>
+        <li>· сетевой: <span class="mono">@kira.mod</span></li>
+        <li>· физ. адрес: см. курьера</li>
+      </ul>
+    </div>
+  </div>
+  <div class="foot-bottom">
+    <span>© ∅∅87 KIRA//MOD ・ все права на ваше тело временно ваши</span>
+    <span><span class="crd">⌬</span> build · mk07.412.b · 2087.05.26</span>
+    <span>«мы не лечим. мы перепрошиваем.»</span>
+  </div>
+</footer>
+
+<script>
+  // ── reticle cursor ─────────────────────────────
+  const ret = document.getElementById('reticle');
+  document.addEventListener('mousemove', e => {
+    ret.style.transform = `translate(${e.clientX}px, ${e.clientY}px) translate(-50%, -50%)`;
+  });
+  document.addEventListener('mousedown', () => { ret.style.scale = '1.4'; });
+  document.addEventListener('mouseup',   () => { ret.style.scale = '1'; });
+
+  // ── clock ──────────────────────────────────────
+  const clk = document.getElementById('clk');
+  setInterval(() => {
+    const d = new Date();
+    const pad = n => String(n).padStart(2, '0');
+    clk.textContent = `SHIBUYA · ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+  }, 1000);
+
+  // ── stock counter drift ────────────────────────
+  const stock = document.getElementById('stock');
+  let s = 47;
+  setInterval(() => {
+    if (Math.random() < .4) s += (Math.random() < .5 ? -1 : 1);
+    s = Math.max(11, Math.min(99, s));
+    stock.innerHTML = s + ' <small style="color:var(--acid)">ед.</small>';
+  }, 1800);
+
+  // ── filter tabs ────────────────────────────────
+  document.querySelectorAll('.filters button').forEach(b => {
+    b.addEventListener('click', () => {
+      document.querySelectorAll('.filters button').forEach(x => x.classList.remove('on'));
+      b.classList.add('on');
+    });
+  });
+
+  // ── cart counter ───────────────────────────────
+  let cart = 2;
+  const cartBtn = document.querySelector('.cart-btn');
+  document.querySelectorAll('.product .add').forEach(btn => {
+    btn.addEventListener('click', e => {
+      e.preventDefault();
+      cart++;
+      cartBtn.textContent = `⌬ корзина · ${String(cart).padStart(2,'0')}`;
+      btn.textContent = '✓ ДОБАВЛЕНО';
+      btn.style.background = 'var(--acid)';
+      btn.style.color = 'var(--carbon)';
+      btn.style.borderColor = 'var(--acid)';
+      setTimeout(() => {
+        btn.textContent = '+ в корзину';
+        btn.style.background = '';
+        btn.style.color = '';
+        btn.style.borderColor = '';
+      }, 1500);
+    });
+  });
+
+  // ── install btn ────────────────────────────────
+  document.querySelector('.install-btn').addEventListener('click', () => {
+    const btn = document.querySelector('.install-btn');
+    const orig = btn.innerHTML;
+    btn.innerHTML = 'СИНХРОНИЗАЦИЯ…';
+    setTimeout(() => { btn.innerHTML = '✓ ЗАПИСЬ НА 27.05'; }, 900);
+    setTimeout(() => { btn.innerHTML = orig; }, 3200);
+  });
+
+  // ── intersection rise-in ───────────────────────
+  const io = new IntersectionObserver(es => {
+    es.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.style.animation = 'rise .7s cubic-bezier(.2,.7,.2,1) both';
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: .12 });
+  document.querySelectorAll('.product, .step, .hazard-card, .feature').forEach((el, i) => {
+    el.style.animationDelay = (i * 60) + 'ms';
+    io.observe(el);
+  });
+</script>
+</body>
+</html>

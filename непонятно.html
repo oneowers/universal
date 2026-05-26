@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="??">
+<head>
+<meta charset="UTF-8">
+<title>ДЕПАРТАМЕНТ НИЧЕГО · форма №∅</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bungee+Shade&family=Old+Standard+TT:ital,wght@0,400;1,400;0,700&family=UnifrakturMaguntia&family=VT323&family=Caveat:wght@400;700&family=Bungee&family=Major+Mono+Display&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0a0a0a;
+    --paper: #efe7d4;
+    --paper-2: #e6dcc2;
+    --stamp: #b8201e;
+    --carbon: #2a1f6b;
+    --mustard: #d9a521;
+    --bruise: #4a1c40;
+    --grid: rgba(10,10,10,.08);
+  }
+
+  @keyframes drift  { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
+  @keyframes drift2 { 0%{transform:translateX(-50%)} 100%{transform:translateX(0)} }
+  @keyframes wobble { 0%,100%{transform:rotate(-1.4deg)} 50%{transform:rotate(1.4deg)} }
+  @keyframes flicker{ 0%,19%,21%,55%,57%,100%{opacity:1} 20%,56%{opacity:.2} }
+  @keyframes shake  { 0%,100%{transform:translate(0,0)} 25%{transform:translate(-1px,1px)} 50%{transform:translate(1px,-1px)} 75%{transform:translate(-1px,-1px)} }
+  @keyframes spin   { to { transform: rotate(-360deg); } }
+  @keyframes blink  { 50% { opacity: 0; } }
+  @keyframes grain  { 0%{transform:translate(0,0)} 10%{transform:translate(-3%,-2%)} 20%{transform:translate(2%,3%)} 30%{transform:translate(-2%,2%)} 40%{transform:translate(3%,-3%)} 50%{transform:translate(-3%,3%)} 60%{transform:translate(2%,-2%)} 70%{transform:translate(-2%,-3%)} 80%{transform:translate(3%,2%)} 90%{transform:translate(-3%,-2%)} 100%{transform:translate(0,0)} }
+  @keyframes typewrong { 0%{content:"ДА"} 17%{content:"НЕ"} 33%{content:"возможно"} 50%{content:"⁂"} 67%{content:"да-нет"} 83%{content:"переспросите"} 100%{content:"ДА"} }
+  @keyframes slidewords { 0%{content:"подпись отсутствует"} 25%{content:"подпись присутствует"} 50%{content:"подпись отрицает себя"} 75%{content:"подпись беспокоится"} 100%{content:"подпись отсутствует"} }
+
+  *{box-sizing:border-box}
+  html, body { margin:0; padding:0; background:var(--paper); color:var(--ink); }
+  body {
+    font-family: "Old Standard TT", serif;
+    background-image:
+      repeating-linear-gradient(90deg, var(--grid) 0 1px, transparent 1px 64px),
+      repeating-linear-gradient(0deg,  var(--grid) 0 1px, transparent 1px 64px),
+      radial-gradient(circle at 20% 30%, rgba(184,32,30,.06), transparent 40%),
+      radial-gradient(circle at 80% 70%, rgba(42,31,107,.08), transparent 45%);
+    overflow-x:hidden;
+    cursor: crosshair;
+  }
+  body::before{
+    content:"";
+    position:fixed; inset:-20%;
+    pointer-events:none; z-index:9999;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.55 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+    mix-blend-mode: multiply;
+    opacity:.35;
+    animation: grain .6s steps(8) infinite;
+  }
+
+  /* ── TICKERS ─────────────────────────────────── */
+  .ticker { overflow:hidden; border-block:2px solid var(--ink); background:var(--ink); color:var(--paper); }
+  .ticker .track { display:inline-flex; white-space:nowrap; gap:3rem; padding:.4rem 0; font-family:"VT323", monospace; font-size:1.6rem; letter-spacing:.05em; }
+  .ticker.r .track { animation: drift 28s linear infinite; }
+  .ticker.l .track { animation: drift2 36s linear infinite; }
+  .ticker .track span { display:inline-block; }
+  .ticker .track .red { color:var(--mustard) }
+  .ticker .track .crossed { text-decoration:line-through; }
+
+  /* ── HEADER STAMP ─────────────────────────────── */
+  .masthead {
+    position:relative; padding: 3rem 2rem 4rem; isolation:isolate;
+  }
+  .masthead h1 {
+    font-family: "Bungee Shade", "Bungee", sans-serif;
+    font-size: clamp(3rem, 11vw, 11rem);
+    line-height:.85;
+    margin:0; color: var(--ink);
+    letter-spacing:-.04em;
+    transform: skewY(-2deg);
+  }
+  .masthead h1 .l2 { color: var(--stamp); transform: translateX(-.6em) translateY(.1em); display:inline-block;}
+  .masthead h1 .l3 { color: var(--carbon); transform: translateX(.4em) translateY(-.2em) rotate(-3deg); display:inline-block;}
+
+  .stamp {
+    position:absolute; top: 2rem; right: 3vw;
+    border: 3px solid var(--stamp); color:var(--stamp);
+    padding:.4rem 1rem; transform: rotate(13deg);
+    font-family:"Bungee", sans-serif; font-size: 1rem;
+    letter-spacing:.18em;
+    animation: wobble 6s ease-in-out infinite;
+  }
+  .stamp small{display:block; font-size:.55rem; font-family:"VT323",monospace; letter-spacing:.1em; text-align:center;}
+
+  .meta-line {
+    margin-top: 1.5rem;
+    display:flex; flex-wrap:wrap; gap:.4rem 2rem;
+    font-family:"VT323", monospace; font-size:1.15rem;
+    border-block:1px dashed var(--ink);
+    padding:.6rem 0;
+  }
+  .meta-line span { white-space:nowrap; }
+  .meta-line .neg { color: var(--stamp); }
+
+  /* ── FOOTNOTE HEADING ─────────────────────────── */
+  .end-first {
+    font-family:"UnifrakturMaguntia", serif;
+    font-size: clamp(2rem, 6vw, 4rem);
+    margin: 3rem 2rem 0;
+    color: var(--bruise);
+    border-bottom: 2px solid var(--bruise);
+    padding-bottom:.3rem;
+  }
+  .end-first::after { content:" ¹"; font-family: serif; font-size:.5em; vertical-align: top;}
+
+  .footnote {
+    margin: .5rem 2rem 2rem; font-style:italic;
+    color: var(--bruise); font-size:.95rem; max-width: 56ch;
+  }
+  .footnote sup a { color: var(--stamp); text-decoration: none; }
+
+  /* ── GRID OF NON-SECTIONS ─────────────────────── */
+  .grid {
+    display:grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap:0;
+    border-block: 2px solid var(--ink);
+    background: var(--ink);
+  }
+  .cell {
+    background:var(--paper);
+    border: 1px solid var(--ink);
+    padding: 1.6rem 1.4rem;
+    position:relative;
+    min-height: 240px;
+  }
+  .cell h3 {
+    font-family:"Major Mono Display", monospace;
+    font-size: 1rem; margin: 0 0 .8rem; letter-spacing:.06em;
+  }
+  .cell p { margin: 0; font-size: .92rem; line-height:1.45; }
+
+  .c-1 { grid-column: span 5; background: var(--mustard); }
+  .c-2 { grid-column: span 4; background: var(--paper-2);}
+  .c-3 { grid-column: span 3; background: var(--ink); color: var(--paper); }
+  .c-3 h3 { color: var(--mustard); }
+  .c-4 { grid-column: span 3; }
+  .c-5 { grid-column: span 6; background: var(--carbon); color: var(--paper); }
+  .c-5 h3 { color: var(--mustard); }
+  .c-6 { grid-column: span 3; background: var(--stamp); color: var(--paper); }
+
+  /* mirror text */
+  .mirror { transform: scaleX(-1); display:inline-block; font-family:"Old Standard TT", serif; }
+  .upside { transform: rotate(180deg); display:inline-block; }
+  .tilt   { display:inline-block; transform: rotate(-7deg); }
+
+  /* counter */
+  .counter {
+    font-family: "VT323", monospace;
+    font-size: 4rem; line-height:1;
+    margin:.5rem 0; color: var(--mustard);
+    text-shadow: 2px 2px 0 var(--stamp);
+    animation: flicker 3s infinite;
+  }
+  .counter-label { font-family:"VT323",monospace; font-size: 1rem; letter-spacing:.1em; }
+
+  /* fake form */
+  .formica { display:grid; gap:.6rem; }
+  .formica label { font-family:"VT323",monospace; font-size:1.1rem; }
+  .formica .row { display:flex; gap:.5rem; align-items:center; }
+  .formica input[type=text] {
+    background: transparent; border: none;
+    border-bottom: 1.5px solid currentColor;
+    font-family:"Caveat", cursive; font-size:1.25rem;
+    padding:.1rem .2rem; color: inherit; width:100%; outline:none;
+  }
+  .formica input[type=text]:focus { background: rgba(255,255,255,.18); }
+  .formica .checks { display:flex; flex-wrap:wrap; gap:.6rem 1rem; font-family:"Old Standard TT",serif; }
+  .formica .checks label { font-family:"Old Standard TT",serif; font-style: italic; }
+  .formica input[type=checkbox] { accent-color: var(--stamp); transform: scale(1.2); }
+
+  /* nervous button */
+  .nerv {
+    appearance:none; border:none; cursor:none;
+    font-family:"Bungee", sans-serif; letter-spacing:.1em;
+    background: var(--stamp); color: var(--paper);
+    padding: .8rem 1.6rem; font-size: 1.1rem;
+    border: 2px solid var(--ink);
+    box-shadow: 6px 6px 0 var(--ink);
+    transition: transform .12s ease;
+  }
+  .nerv::after { content: "ДА"; animation: typewrong 9s steps(1) infinite; }
+
+  /* fake CAPTCHA */
+  .captcha {
+    border: 2px solid var(--ink);
+    background: var(--paper-2);
+    padding: 1rem;
+    color: var(--ink);
+  }
+  .captcha .q {
+    font-family:"VT323",monospace; font-size:1.1rem; margin-bottom:.6rem;
+  }
+  .cap-grid { display:grid; grid-template-columns: repeat(3, 1fr); gap:6px; }
+  .cap-cell {
+    aspect-ratio: 1; background: var(--paper);
+    border:1px solid var(--ink);
+    display:grid; place-items:center;
+    font-family:"Major Mono Display", monospace;
+    cursor:pointer; user-select:none;
+    transition: background .15s, transform .15s;
+  }
+  .cap-cell:hover { background: var(--mustard); transform: rotate(2deg); }
+  .cap-cell.on { background: var(--stamp); color: var(--paper); }
+
+  /* loading nowhere */
+  .loader {
+    display:inline-flex; align-items:center; gap:.6rem;
+    font-family:"VT323",monospace; font-size:1.15rem;
+  }
+  .loader::before {
+    content:""; display:inline-block; width:1.1rem; height:1.1rem;
+    border: 3px solid currentColor; border-right-color: transparent;
+    border-radius:50%; animation: spin 1.4s linear infinite;
+  }
+
+  /* spinning seal */
+  .seal {
+    position:absolute; top:-30px; right:-30px; width:120px; height:120px;
+    border-radius:50%; border:2px solid var(--ink);
+    background: radial-gradient(circle at 30% 30%, var(--mustard), var(--stamp));
+    color: var(--paper); display:grid; place-items:center;
+    font-family:"VT323",monospace; font-size:.85rem; text-align:center;
+    transform: rotate(-15deg);
+    box-shadow: 4px 4px 0 var(--ink);
+    z-index:3;
+  }
+  .seal::before {
+    content:""; position:absolute; inset:8px; border:1px dashed var(--paper); border-radius:50%;
+    animation: spin 30s linear infinite;
+  }
+
+  /* big quote */
+  .quote {
+    margin: 4rem 2rem;
+    font-family:"UnifrakturMaguntia", serif;
+    font-size: clamp(1.6rem, 4vw, 3rem);
+    line-height:1.05;
+    column-count: 2; column-gap: 3rem;
+    column-rule: 1px solid var(--ink);
+  }
+  .quote .red { color: var(--stamp); }
+  .quote .car { color: var(--carbon); }
+  .quote .strike { text-decoration: line-through; opacity:.6; }
+  .quote .small  { font-size:.6em; font-family:"Caveat", cursive; }
+
+  /* infinite begin */
+  .begin {
+    margin: 4rem 2rem 1rem;
+    font-family:"Bungee Shade", sans-serif;
+    font-size: clamp(2.5rem, 8vw, 7rem);
+    line-height:.9;
+    color: var(--carbon);
+    transform: rotate(-1.5deg);
+  }
+  .begin span:nth-child(2) { color: var(--stamp); transform: translateY(.2em); display:inline-block; }
+  .begin span:nth-child(3) { color: var(--bruise); transform: rotate(180deg); display:inline-block; }
+
+  /* fine print accordion of nonsense */
+  details {
+    border-top: 1px solid var(--ink);
+    padding: .8rem 2rem; font-family: "VT323", monospace; font-size:1rem;
+  }
+  details:last-of-type { border-bottom: 1px solid var(--ink); }
+  details summary { cursor: pointer; letter-spacing:.05em; }
+  details[open] summary { color: var(--stamp); }
+  details p { font-family:"Old Standard TT", serif; font-size:.95rem; max-width: 60ch; }
+
+  /* paragraph that contradicts itself */
+  .contra {
+    margin: 3rem 2rem; columns: 2; column-gap: 3rem; column-rule: 1px dashed var(--ink);
+    font-size: 1.05rem; line-height:1.5;
+  }
+  .contra del { color: var(--stamp); }
+  .contra ins { text-decoration:none; background: var(--mustard); color: var(--ink); padding:0 .15em; }
+  .contra .cv { font-family:"Caveat", cursive; font-size:1.4em; color: var(--carbon); }
+
+  /* sticky bureaucracy stamp */
+  .scrollnumber {
+    position:fixed; left:.8rem; bottom:.8rem;
+    font-family:"VT323", monospace; color:var(--ink);
+    background:var(--mustard); border:1.5px solid var(--ink);
+    padding:.2rem .6rem; font-size:1.15rem; z-index: 50;
+    transform: rotate(-3deg);
+  }
+  .scrollnumber::before { content:"стр. "; opacity:.7; }
+
+  /* fake cursor */
+  .ghost-cursor {
+    position:fixed; top:0; left:0; width:18px; height:18px;
+    border:1.5px solid var(--stamp); border-radius:50%;
+    pointer-events:none; mix-blend-mode: multiply; z-index: 9000;
+    transform: translate(-50%,-50%);
+  }
+  .ghost-cursor::after{
+    content:""; position:absolute; inset:5px; background:var(--stamp); border-radius:50%;
+    animation: blink 1.1s steps(1) infinite;
+  }
+
+  /* TOC that lies */
+  .toc {
+    margin: 2rem; border: 2px solid var(--ink); padding: 1rem 1.4rem;
+    background: repeating-linear-gradient(45deg, var(--paper) 0 14px, var(--paper-2) 14px 28px);
+    font-family:"VT323",monospace;
+  }
+  .toc h4 { margin:0 0 .4rem; font-family:"Bungee", sans-serif; letter-spacing:.1em; font-size:1.05rem;}
+  .toc ol { margin:0; padding-left: 1.5rem; }
+  .toc li { display:flex; justify-content: space-between; gap:.6rem; }
+  .toc li::after { content:""; flex:1; border-bottom: 2px dotted var(--ink); transform: translateY(-.45rem); margin: 0 .4rem; }
+  .toc li .pg { font-variant-numeric: tabular-nums; }
+  .toc .strike { text-decoration:line-through; opacity:.65; }
+  .toc .neg { color: var(--stamp); }
+
+  /* receipt strip */
+  .receipt {
+    margin: 2rem auto; max-width: 360px;
+    background: var(--paper); padding: 1.2rem;
+    font-family:"VT323",monospace; font-size:1rem; color:var(--ink);
+    border: 1px dashed var(--ink);
+    box-shadow:
+      0 0 0 1px var(--ink),
+      8px 8px 0 -3px var(--ink);
+    transform: rotate(-1.5deg);
+  }
+  .receipt h5 { margin:0 0 .4rem; text-align:center; letter-spacing:.2em; font-size:1.15rem;}
+  .receipt .row { display:flex; justify-content: space-between; }
+  .receipt hr { border:none; border-top:1px dashed var(--ink); margin:.5rem 0;}
+  .receipt .total { font-size:1.3rem; }
+  .receipt .barcode {
+    margin-top:.6rem; height: 36px;
+    background-image: repeating-linear-gradient(
+      90deg,
+      var(--ink) 0 2px, transparent 2px 4px,
+      var(--ink) 4px 8px, transparent 8px 10px,
+      var(--ink) 10px 13px, transparent 13px 15px,
+      var(--ink) 15px 17px, transparent 17px 21px
+    );
+  }
+  .receipt .barcode-no { font-size:.8rem; text-align:center; letter-spacing:.3em; }
+
+  /* signature line */
+  .sigline {
+    margin: 3rem 2rem; display:grid; grid-template-columns: 1fr 1fr; gap: 2rem; align-items: end;
+    font-family:"Old Standard TT", serif;
+  }
+  .sigline .line { border-bottom: 1.5px solid var(--ink); height: 2.5rem; position:relative;}
+  .sigline .line::after { content:"× "attr(data-l); position:absolute; left:0; bottom:-1.4rem; font-size:.85rem; font-style:italic;}
+  .sigline .line .scribble {
+    position:absolute; left: 1rem; bottom:.3rem;
+    font-family:"Caveat", cursive; font-size:1.8rem; color: var(--carbon);
+    transform: rotate(-6deg);
+    animation: shake 7s ease-in-out infinite;
+  }
+  .sigline .line .scribble.r { color: var(--stamp); transform: rotate(4deg); left: 50%; }
+  .sigline .line .scribble::after{ content:""; animation: slidewords 12s steps(1) infinite; }
+
+  footer {
+    border-top: 4px double var(--ink);
+    padding: 2rem; margin-top: 4rem;
+    font-family:"VT323", monospace; font-size: 1.05rem;
+    display:grid; grid-template-columns: repeat(3, 1fr); gap: 2rem;
+  }
+  footer h6 { margin:0 0 .3rem; font-family:"Bungee", sans-serif; letter-spacing:.1em;}
+  footer a { color: var(--stamp); text-decoration: underline wavy; }
+
+  /* misc decorative absolutes */
+  .float-num {
+    position:absolute; font-family:"Bungee Shade", sans-serif;
+    font-size: 8rem; color: var(--paper-2);
+    pointer-events:none; user-select:none; z-index:0;
+  }
+
+  @media (max-width: 900px) {
+    .c-1,.c-2,.c-3,.c-4,.c-5,.c-6 { grid-column: span 12; }
+    .quote, .contra { column-count: 1; }
+    footer { grid-template-columns: 1fr; }
+    .seal { width:90px; height:90px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="ghost-cursor" id="ghost"></div>
+
+<!-- top scroll bar -->
+<div class="ticker r">
+  <div class="track">
+    <span>↯ ВНИМАНИЕ ↯</span><span class="red">forma не действительна</span>
+    <span>see footnote ¹⁷</span><span>※ please ignore everything below ※</span>
+    <span class="crossed">important update 2014</span><span>⟁ formulary closed since opening ⟁</span>
+    <span>↯ ВНИМАНИЕ ↯</span><span class="red">forma не действительна</span>
+    <span>see footnote ¹⁷</span><span>※ please ignore everything below ※</span>
+    <span class="crossed">important update 2014</span><span>⟁ formulary closed since opening ⟁</span>
+  </div>
+</div>
+
+<!-- masthead -->
+<header class="masthead">
+  <div class="float-num" style="top: 1rem; right: 28vw;">№∅</div>
+  <div class="stamp">отказ&nbsp;принят<small>отдел сомнений · 28/∞/—</small></div>
+
+  <h1>
+    ДЕПАРТАМЕНТ<br>
+    <span class="l2">НИЧЕГО</span><br>
+    <span class="l3">в&nbsp;частности</span>
+  </h1>
+
+  <div class="meta-line">
+    <span>дело № <s>0481-Б</s> <span class="neg">— не существует</span></span>
+    <span>выдано: завтра, в&nbsp;06:14</span>
+    <span>истекает: до начала выдачи</span>
+    <span>подпись: <em>см.&nbsp;ниже&nbsp;(см.&nbsp;выше)</em></span>
+    <span class="neg">статус: ⌬ ⌬ ⌬</span>
+  </div>
+</header>
+
+<!-- TOC that lies -->
+<nav class="toc" aria-label="оглавление">
+  <h4>СОДЕРЖАНИЕ <span style="font-family:'Caveat',cursive; font-weight:400;">(не полное и местами обратное)</span></h4>
+  <ol start="7">
+    <li><span>гл. ø — конец, разделённый на части</span><span class="pg">стр. —2</span></li>
+    <li class="strike"><span>гл. 17 — введение</span><span class="pg">стр. 003½</span></li>
+    <li><span class="neg">гл. 4 — пустая, см. предисловие</span><span class="pg">стр. ⌬</span></li>
+    <li><span>гл. ⁂ — глава, отрицающая собственный номер</span><span class="pg">стр. 9, 11, 9</span></li>
+    <li><span>прилож. А — приложение В</span><span class="pg">стр. см. прилож. Б</span></li>
+    <li class="strike"><span>прилож. Б — отсутствует</span><span class="pg">стр. ███</span></li>
+    <li><span>послесловие, написанное первым</span><span class="pg">стр. 1</span></li>
+  </ol>
+</nav>
+
+<!-- middle ticker, opposite direction -->
+<div class="ticker l">
+  <div class="track">
+    <span>※ начало сверху · конец снизу · возможны исключения ※</span>
+    <span class="red">do not read in this order</span>
+    <span>※ начало сверху · конец снизу · возможны исключения ※</span>
+    <span class="red">do not read in this order</span>
+    <span>※ начало сверху · конец снизу · возможны исключения ※</span>
+    <span class="red">do not read in this order</span>
+  </div>
+</div>
+
+<!-- the end, first -->
+<h2 class="end-first">Конец</h2>
+<p class="footnote">
+  ¹ &nbsp;настоящая сноска ссылается на саму себя <sup><a href="#" onclick="return false">[¹]</a></sup>,
+  что делает её одновременно полной и пустой. рекомендуется не читать дважды,
+  если только не уже прочитано трижды.
+</p>
+
+<!-- main grid -->
+<section class="grid">
+
+  <!-- big yellow form cell -->
+  <article class="cell c-1">
+    <div class="seal">ЗАВИЗИРОВАНО<br>· отделом · отказов ·</div>
+    <h3>заявление №(не указано)</h3>
+    <form class="formica" onsubmit="event.preventDefault(); document.getElementById('out').textContent='форма принята к рассмотрению, рассмотрение отменено';">
+      <label>имя того, кто заполняет:
+        <input type="text" placeholder="не вы">
+      </label>
+      <label>имя того, за кого заполняет:
+        <input type="text" placeholder="вы, но позднее">
+      </label>
+      <div class="checks">
+        <label><input type="checkbox"> я подтверждаю</label>
+        <label><input type="checkbox" checked> я не подтверждаю</label>
+        <label><input type="checkbox"> воздерживаюсь от подтверждения подтверждения</label>
+        <label><input type="checkbox"> ⌬</label>
+      </div>
+      <div class="row">
+        <button class="nerv" id="da" type="submit"></button>
+        <span class="loader" id="out">обработка с 14 апреля&nbsp;1973…</span>
+      </div>
+    </form>
+  </article>
+
+  <!-- counter -->
+  <article class="cell c-2">
+    <h3>что ещё не случилось</h3>
+    <div class="counter-label">обратный отсчёт до момента, который не наступит:</div>
+    <div class="counter" id="counter">∞ — ∞</div>
+    <p style="margin-top:.6rem; font-family:'Caveat',cursive; font-size:1.15rem;">
+      *счётчик увеличивается, когда никто не смотрит. вы смотрите.
+    </p>
+  </article>
+
+  <!-- mirror help -->
+  <article class="cell c-3">
+    <h3>помощь · pomoshch</h3>
+    <p>
+      <span class="mirror">если вы это прочитали — значит вы прочитали это в обратном порядке.</span>
+    </p>
+    <p style="margin-top:.8rem;">
+      <span class="upside">для дальнейших указаний переверните экран. для отмены — переверните себя.</span>
+    </p>
+    <p style="margin-top:.8rem; font-family:'Major Mono Display',monospace; font-size:.8rem;">
+      hotline: +7 (∅∅∅) ∅∅∅-∅∅∅∅ &nbsp;·&nbsp; занято с 1962
+    </p>
+  </article>
+
+  <!-- captcha -->
+  <article class="cell c-4">
+    <h3>проверка · captcha</h3>
+    <div class="captcha">
+      <div class="q">выберите все квадраты, содержащие <em>смысл</em>:</div>
+      <div class="cap-grid" id="cap">
+        <div class="cap-cell">⌬</div><div class="cap-cell">∅</div><div class="cap-cell">⁂</div>
+        <div class="cap-cell">▣</div><div class="cap-cell">?</div><div class="cap-cell">⌖</div>
+        <div class="cap-cell">!</div><div class="cap-cell">·</div><div class="cap-cell">∞</div>
+      </div>
+      <div class="q" style="margin-top:.5rem;" id="capres">ожидание решения…</div>
+    </div>
+  </article>
+
+  <!-- carbon quote cell -->
+  <article class="cell c-5">
+    <h3>выдержка из несуществующего постановления</h3>
+    <p style="font-family:'UnifrakturMaguntia',serif; font-size:1.4rem; line-height:1.2;">
+      «настоящим утверждается, что <span class="tilt" style="color:var(--mustard)">ничего</span> утверждено
+      не&nbsp;будет — за&nbsp;исключением <em>утверждения о&nbsp;неутверждении</em>,
+      которое автоматически утверждает само себя, после чего <strong>аннулирует</strong>».
+    </p>
+    <p style="margin-top:.8rem; font-family:'Caveat',cursive; font-size:1.1rem; color:var(--mustard);">
+      — подписано лицом, не имеющим лица
+    </p>
+  </article>
+
+  <!-- red receipt cell -->
+  <article class="cell c-6">
+    <h3>квитанция</h3>
+    <p style="font-family:'VT323',monospace; font-size:1.05rem;">
+      настоящая квитанция действительна
+      <em>только при отсутствии</em>.
+      сохраните до выдачи. выдача не предусмотрена.
+    </p>
+    <p style="margin-top:.6rem; font-family:'Major Mono Display',monospace; font-size:.8rem;">
+      серия: ⌬⌬-∅<br>
+      номер: <span id="rnum">. . .</span>
+    </p>
+  </article>
+
+</section>
+
+<!-- big quote -->
+<blockquote class="quote">
+  <span class="red">Если</span> вы дочитали до этого места —
+  <span class="strike">поздравляем,</span>
+  <span class="car">это&nbsp;не&nbsp;то&nbsp;место.</span>
+  <span class="small">(подлинное «это место» располагается выше, ниже, или сбоку — точное направление утрачено.)</span>
+</blockquote>
+
+<!-- contradicting paragraph -->
+<section class="contra">
+  <p>
+    Заполните <del>форму</del> <ins>не-форму</ins> подписью того лица, которое
+    <del>является вами</del> <ins>отрицает ваше существование</ins>.
+    <span class="cv">после</span> заполнения форма должна быть
+    <del>сдана</del> <ins>забыта</ins> в течение
+    <strong>—4 рабочих дней</strong>.
+  </p>
+  <p>
+    В случае <del>удачного</del> <ins>несостоявшегося</ins> рассмотрения
+    заявитель получит <del>уведомление</del> <ins>отсутствие уведомления</ins>
+    по адресу, который <em>не был указан</em>, но <em>будет указан задним числом</em>.
+    <span class="cv">спасибо.</span>
+  </p>
+</section>
+
+<!-- signature -->
+<div class="sigline">
+  <div>
+    <div class="line" data-l="подпись заявителя">
+      <span class="scribble">~∿~∿</span>
+    </div>
+  </div>
+  <div>
+    <div class="line" data-l="подпись&nbsp;того, кто заявителю отказал">
+      <span class="scribble r">⌬⌬⌬</span>
+    </div>
+  </div>
+</div>
+
+<!-- receipt -->
+<aside class="receipt">
+  <h5>· · · К В И Т А Н Ц И Я · · ·</h5>
+  <div class="row"><span>ничто</span><span>×1</span></div>
+  <div class="row"><span>повтор ничего</span><span>×3</span></div>
+  <div class="row"><span>административный сбор</span><span>—0,00</span></div>
+  <div class="row"><span>возврат административного сбора</span><span>+0,00</span></div>
+  <hr>
+  <div class="row total"><strong>ИТОГО</strong><strong>∅,∅∅</strong></div>
+  <div class="barcode"></div>
+  <div class="barcode-no">∅∅∅ ⁂ ∅∅∅ ⁂ ∅∅∅</div>
+</aside>
+
+<!-- accordion of nonsense -->
+<details>
+  <summary>▶ нажмите, чтобы развернуть пункт, который сворачивает сам себя</summary>
+  <p>Данный пункт находится в состоянии перманентного сворачивания.
+  Развёрнутое состояние является иллюзорным и засчитывается как сворачивание второго порядка.</p>
+</details>
+<details open>
+  <summary>▶ пункт, который всегда открыт, кроме случаев, когда он закрыт</summary>
+  <p>Если вы закрыли этот пункт — он всё ещё открыт где-то ещё.</p>
+</details>
+<details>
+  <summary>▶ примечание переводчика, не знающего язык оригинала</summary>
+  <p>Перевод выполнен по интонации. За точность не отвечаю. За неточность тоже.</p>
+</details>
+<details>
+  <summary>▶ ссылка на пункт <em>выше</em>, который на самом деле ниже</summary>
+  <p>см.&nbsp;пункт «начало», расположенный после «конца», но до «оглавления».</p>
+</details>
+
+<!-- the beginning, last -->
+<h2 class="begin"><span>Н</span><span>А</span><span>Ч</span>АЛО</h2>
+<p style="margin: 0 2rem 3rem; font-family:'Caveat',cursive; font-size:1.4rem; color: var(--bruise);">
+  здесь начинается то, что уже закончилось наверху страницы.
+</p>
+
+<!-- footer -->
+<footer>
+  <div>
+    <h6>контакт</h6>
+    мы не отвечаем.<br>
+    если ответ получен — он не от нас.<br>
+    <a href="#" onclick="event.preventDefault()">письмо в архив будущего →</a>
+  </div>
+  <div>
+    <h6>часы приёма</h6>
+    пн — ∅∅:∅∅ – ∅∅:∅∅<br>
+    вт — закрыто, но открыто<br>
+    ср — см. вт<br>
+    чт — четверг отменён<br>
+    пт — выходной с 1899
+  </div>
+  <div>
+    <h6>колофон</h6>
+    набрано вручную не теми руками<br>
+    свёрстано на машине, которой нет<br>
+    © ∅∅∅∅ — все права <em>не</em> защищены<br>
+    <span style="color:var(--carbon)">v.0.0.—1</span>
+  </div>
+</footer>
+
+<div class="scrollnumber" id="scrollnumber">—</div>
+
+<script>
+  // ── ghost cursor with lag ─────────────────────────
+  const ghost = document.getElementById('ghost');
+  let mx=window.innerWidth/2, my=window.innerHeight/2, gx=mx, gy=my;
+  document.addEventListener('mousemove', e => { mx=e.clientX; my=e.clientY; });
+  (function tick(){
+    gx += (mx-gx)*0.05;
+    gy += (my-gy)*0.05;
+    ghost.style.transform = `translate(${gx}px, ${gy}px) translate(-50%,-50%) rotate(${(mx-gx)*2}deg)`;
+    requestAnimationFrame(tick);
+  })();
+
+  // ── nervous button: dodges, returns ───────────────
+  const nerv = document.getElementById('da');
+  nerv.addEventListener('mouseenter', () => {
+    const dx = (Math.random()-0.5) * 220;
+    const dy = (Math.random()-0.5) * 80;
+    const rz = (Math.random()-0.5) * 18;
+    nerv.style.transform = `translate(${dx}px, ${dy}px) rotate(${rz}deg)`;
+  });
+  nerv.addEventListener('mouseleave', () => {
+    nerv.style.transform = '';
+  });
+  nerv.addEventListener('click', e => {
+    e.preventDefault();
+    const msgs = [
+      'нажатие зарегистрировано · не учтено',
+      'ваша подпись принята задним числом',
+      'отдел согласований ушёл, не предупредив',
+      'кнопка отказалась нажиматься, но не успела',
+      'формально — да. фактически — ∅.'
+    ];
+    document.getElementById('out').textContent = msgs[Math.floor(Math.random()*msgs.length)];
+  });
+
+  // ── counter that drifts both ways ─────────────────
+  let n = 7341;
+  const ctEl = document.getElementById('counter');
+  setInterval(() => {
+    n += (Math.random() > 0.7 ? 1 : -1);
+    const sign = (Math.random() > 0.5 ? '—' : '+');
+    ctEl.textContent = sign + ' ' + n.toLocaleString('ru-RU') + ' ' + (Math.random()>0.5?'∅':'⌬');
+  }, 700);
+
+  // ── captcha that grades inversely ─────────────────
+  const cap = document.getElementById('cap');
+  const capres = document.getElementById('capres');
+  const messages = [
+    'неверно. попробуйте не пытаться.',
+    'почти верно. но не совсем. но и не неверно.',
+    'правильный ответ был не выбран — потому что его нет.',
+    'результат: ∅/9. поздравляем.',
+    'смысл найден, но в другом квадрате.',
+    'верно — для предыдущего вопроса.'
+  ];
+  cap.addEventListener('click', e => {
+    const c = e.target.closest('.cap-cell');
+    if (!c) return;
+    c.classList.toggle('on');
+    capres.textContent = messages[Math.floor(Math.random()*messages.length)];
+  });
+
+  // ── floating receipt number ───────────────────────
+  function randDigits(n){ let s=''; for(let i=0;i<n;i++) s+= Math.random()>0.85 ? '⌬' : Math.floor(Math.random()*10); return s; }
+  const rn = document.getElementById('rnum');
+  setInterval(()=> rn.textContent = randDigits(6) + ' / ' + randDigits(3), 900);
+
+  // ── scrollnumber: page number that lies ───────────
+  const sn = document.getElementById('scrollnumber');
+  const lies = ['½','—2','∅','17ᵇ','π','—','⌬','iv½','77/77','§','стр. нет'];
+  let i = 0;
+  window.addEventListener('scroll', () => {
+    sn.textContent = lies[i % lies.length];
+    i++;
+  }, { passive: true });
+
+  // ── invert random checkbox states ─────────────────
+  document.querySelectorAll('.formica input[type=checkbox]').forEach(cb=>{
+    cb.addEventListener('change', () => {
+      // 40% chance another random checkbox toggles in solidarity
+      if (Math.random() < .4) {
+        const all = document.querySelectorAll('.formica input[type=checkbox]');
+        const other = all[Math.floor(Math.random()*all.length)];
+        if (other && other !== cb) other.checked = !other.checked;
+      }
+    });
+  });
+
+  // ── input fields that rewrite themselves ──────────
+  document.querySelectorAll('.formica input[type=text]').forEach(inp => {
+    inp.addEventListener('blur', () => {
+      if (!inp.value) return;
+      const v = inp.value;
+      // every 3rd time, reverse what user typed
+      if (Math.random() < 0.5) {
+        inp.value = v.split('').reverse().join('');
+      } else {
+        inp.value = v.replace(/[аеиоуыэюяАЕИОУЫЭЮЯaeiouAEIOU]/g, '⌬');
+      }
+    });
+  });
+</script>
+</body>
+</html>
