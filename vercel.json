@@ -1,0 +1,6 @@
+{
+  "rewrites": [
+    { "source": "/aisha/:path*", "destination": "https://back.aisha.group/:path*" },
+    { "source": "/gemini/:path*", "destination": "https://generativelanguage.googleapis.com/:path*" }
+  ]
+}
